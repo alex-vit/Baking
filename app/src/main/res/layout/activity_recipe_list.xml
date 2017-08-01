@@ -5,5 +5,5 @@
     android:id="@+id/rv_recipe_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:desiredColumnWidth="400"
+    app:desiredColumnWidth="@integer/desired_column_width"
     tools:context="com.alexvit.baking.RecipeListActivity" />

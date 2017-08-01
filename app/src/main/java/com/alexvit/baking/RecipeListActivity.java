@@ -1,5 +1,6 @@
 package com.alexvit.baking;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -54,10 +55,17 @@ public class RecipeListActivity extends AppCompatActivity
     @Override
     public void onRecipeClicked(Recipe recipe) {
         Log.d(TAG, "Recipe " + recipe.id + " clicked");
+        launchRecipeDetail(recipe);
     }
 
     private void initRecyclerView() {
         mAdapter = new RecipeRecyclerViewAdapter(this);
         mRvRecipes.setAdapter(mAdapter);
+    }
+
+    private void launchRecipeDetail(Recipe recipe) {
+        Intent intent = new Intent(this, RecipeDetailActivity.class);
+        intent.putExtra(RecipeDetailActivity.TAG_PARCEL_RECIPE, recipe);
+        startActivity(intent);
     }
 }

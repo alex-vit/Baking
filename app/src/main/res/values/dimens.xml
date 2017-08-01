@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="desired_column_width">400</integer>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="fz_medium">32sp</dimen>
+    <dimen name="circle_diameter_small">30dp</dimen>
+    <dimen name="fz_normal">20sp</dimen>
+    <dimen name="fz_circle_text">24sp</dimen>
+</resources>

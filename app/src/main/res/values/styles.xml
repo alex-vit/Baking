@@ -8,4 +8,13 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CircleNumber">
+        <item name="android:layout_width">@dimen/circle_diameter_small</item>
+        <item name="android:layout_height">@dimen/circle_diameter_small</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/trippy_circle</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/fz_circle_text</item>
+    </style>
+
 </resources>
