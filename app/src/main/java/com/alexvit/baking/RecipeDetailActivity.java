@@ -48,5 +48,8 @@ public class RecipeDetailActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView() {
+        // TODO (1) Implement recycler
     }
+
+    // TODO (2) Implement launching step activity
 }
