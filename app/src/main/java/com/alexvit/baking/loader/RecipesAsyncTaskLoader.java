@@ -3,7 +3,7 @@ package com.alexvit.baking.loader;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.alexvit.baking.model.Recipe;
+import com.alexvit.baking.entity.Recipe;
 import com.google.gson.Gson;
 
 import java.io.BufferedInputStream;

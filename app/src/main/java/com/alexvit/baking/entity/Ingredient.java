@@ -1,4 +1,4 @@
-package com.alexvit.baking.model;
+package com.alexvit.baking.entity;
 
 /**
  * Created by alexander.vitjukov on 31.07.2017.

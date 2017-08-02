@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alexvit.baking.model.Recipe;
+import com.alexvit.baking.entity.Recipe;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
@@ -19,12 +19,12 @@ import butterknife.ButterKnife;
  * Created by alexander.vitjukov on 31.07.2017.
  */
 
-public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecyclerViewAdapter.MyViewHolder> {
+public class RecipeListRvAdapter extends RecyclerView.Adapter<RecipeListRvAdapter.MyViewHolder> {
 
     private List<Recipe> mRecipes = null;
     private OnRecipeClickedListener mListener;
 
-    public RecipeRecyclerViewAdapter(OnRecipeClickedListener listener) {
+    public RecipeListRvAdapter(OnRecipeClickedListener listener) {
         mListener = listener;
     }
 

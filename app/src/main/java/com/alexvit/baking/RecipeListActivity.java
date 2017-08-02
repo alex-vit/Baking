@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.alexvit.baking.loader.RecipesAsyncTaskLoader;
-import com.alexvit.baking.model.Recipe;
+import com.alexvit.baking.entity.Recipe;
 
 import java.util.List;
 
@@ -18,14 +18,14 @@ import butterknife.ButterKnife;
 
 public class RecipeListActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<List<Recipe>>,
-        RecipeRecyclerViewAdapter.OnRecipeClickedListener {
+        RecipeListRvAdapter.OnRecipeClickedListener {
 
     private static final String TAG = RecipeListActivity.class.getSimpleName();
 
     @BindView(R.id.rv_recipe_list)
     RecyclerView mRvRecipes;
 
-    private RecipeRecyclerViewAdapter mAdapter;
+    private RecipeListRvAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +54,11 @@ public class RecipeListActivity extends AppCompatActivity
 
     @Override
     public void onRecipeClicked(Recipe recipe) {
-        Log.d(TAG, "Recipe " + recipe.id + " clicked");
         launchRecipeDetail(recipe);
     }
 
     private void initRecyclerView() {
-        mAdapter = new RecipeRecyclerViewAdapter(this);
+        mAdapter = new RecipeListRvAdapter(this);
         mRvRecipes.setAdapter(mAdapter);
     }
 

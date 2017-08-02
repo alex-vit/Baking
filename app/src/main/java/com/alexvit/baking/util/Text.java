@@ -1,6 +1,6 @@
 package com.alexvit.baking.util;
 
-import com.alexvit.baking.model.Ingredient;
+import com.alexvit.baking.entity.Ingredient;
 
 import java.util.List;
 

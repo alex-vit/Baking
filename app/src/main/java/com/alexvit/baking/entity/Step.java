@@ -1,4 +1,4 @@
-package com.alexvit.baking.model;
+package com.alexvit.baking.entity;
 
 /**
  * Created by alexander.vitjukov on 31.07.2017.
@@ -26,7 +26,7 @@ public class Step implements Parcelable {
     };
     @SerializedName("id")
     @Expose
-    public Integer id;
+    public Integer number;
     @SerializedName("shortDescription")
     @Expose
     public String shortDescription;
@@ -41,7 +41,7 @@ public class Step implements Parcelable {
     public String thumbnailURL;
 
     protected Step(Parcel in) {
-        id = in.readByte() == 0x00 ? null : in.readInt();
+        number = in.readByte() == 0x00 ? null : in.readInt();
         shortDescription = in.readString();
         description = in.readString();
         videoURL = in.readString();
@@ -55,11 +55,11 @@ public class Step implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (id == null) {
+        if (number == null) {
             dest.writeByte((byte) (0x00));
         } else {
             dest.writeByte((byte) (0x01));
-            dest.writeInt(id);
+            dest.writeInt(number);
         }
         dest.writeString(shortDescription);
         dest.writeString(description);

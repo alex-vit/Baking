@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ns_recipe_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,29 +10,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_small"
+        android:descendantFocusability="blocksDescendants"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/recipe_ingredients_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/ingredients_title"
-            android:textSize="@dimen/fz_medium"
-            tools:text="Ingredients" />
+            android:layout_margin="@dimen/margin_small"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/recipe_ingredients_list"
+            <TextView
+                android:id="@+id/recipe_ingredients_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ingredients_title"
+                android:textSize="@dimen/fz_medium"
+                tools:text="Ingredients" />
+
+            <TextView
+                android:id="@+id/recipe_ingredients_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fz_normal"
+                tools:text="1. Soda\n2. Hydrogen" />
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_steps"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/fz_normal"
-            tools:text="1. Soda\n2. Hydrogen" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_steps"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-</LinearLayout>
+</android.support.v4.widget.NestedScrollView>

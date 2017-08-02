@@ -9,4 +9,8 @@
         android:endColor="@color/colorAccent"
         android:startColor="@color/colorPrimary" />
 
+    <size
+        android:width="@dimen/circle_diameter_small"
+        android:height="@dimen/circle_diameter_small" />
+
 </shape>
