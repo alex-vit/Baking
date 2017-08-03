@@ -7,4 +7,5 @@
     <dimen name="circle_diameter_small">30dp</dimen>
     <dimen name="fz_normal">20sp</dimen>
     <dimen name="fz_circle_text">24dp</dimen>
+    <dimen name="corner_radius_tiny">4dp</dimen>
 </resources>
