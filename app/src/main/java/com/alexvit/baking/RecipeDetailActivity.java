@@ -1,5 +1,6 @@
 package com.alexvit.baking;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,9 @@ import android.widget.TextView;
 import com.alexvit.baking.entity.Recipe;
 import com.alexvit.baking.entity.Step;
 import com.alexvit.baking.util.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +36,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
 
-        mRecipe = getRecipe();
+        mRecipe = getRecipe(savedInstanceState);
 
         ButterKnife.bind(this);
 
@@ -43,20 +47,32 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     }
 
     @Override
-    public void onStepClicked(Step step) {
-        Log.d(TAG, "Step " + step.number + " clicked");
-        /* TODO Implement launching step activity
-         * - create launchActivity method
-         * - make activity child of this one
-         * - pass step list as parcel
-         * - implement viewpager for awesomeness
-         */
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(TAG_PARCEL_RECIPE, mRecipe);
     }
 
-    private Recipe getRecipe() {
-        Recipe recipe = getIntent().getParcelableExtra(TAG_PARCEL_RECIPE);
+    @Override
+    public void onStepClicked(Step step) {
+        launchStepActivity(mRecipe.steps, step.number);
+    }
+
+    private Recipe getRecipe(Bundle state) {
+
+        Recipe recipe = null;
+
+        if (state != null) {
+            // restoring activity
+            recipe = state.getParcelable(TAG_PARCEL_RECIPE);
+            Log.d(TAG, "got recipe from state");
+        } else {
+            // starting activity
+            recipe = getIntent().getParcelableExtra(TAG_PARCEL_RECIPE);
+            Log.d(TAG, "got recipe from extras");
+        }
+
         if (recipe == null) {
-            throw new NullPointerException("Parcelable extra Recipe was null.");
+            throw new NullPointerException("No recipe was found in state nor extras.");
         }
         return recipe;
     }
@@ -69,6 +85,14 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         mAdapter = new RecipeDetailRvAdapter(this);
         mAdapter.setSteps(mRecipe.steps);
         mRecycler.setAdapter(mAdapter);
+    }
+
+    private void launchStepActivity(List<Step> stepList, int stepNumber) {
+        Intent intent = new Intent(this, StepActivity.class);
+        ArrayList<Step> steps = new ArrayList<>(stepList);
+        intent.putParcelableArrayListExtra(StepActivity.TAG_PARCEL_STEP_LIST, steps);
+        intent.putExtra(StepActivity.TAG_PARCEL_STEP_NUMBER, stepNumber);
+        startActivity(intent);
     }
 
 }
