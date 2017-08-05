@@ -3,47 +3,36 @@ package com.alexvit.baking;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.widget.TextView;
 
 import com.alexvit.baking.entity.Recipe;
 import com.alexvit.baking.entity.Step;
-import com.alexvit.baking.util.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailRvAdapter.OnStepClickedListener {
 
     public static final String TAG_PARCEL_RECIPE = "TAG_PARCEL_RECIPE";
-    private static final String TAG = RecipeDetailActivity.class.getSimpleName();
-    @BindView(R.id.recipe_ingredients_list)
-    TextView mIngredients;
 
-    @BindView(R.id.rv_steps)
-    RecyclerView mRecycler;
-    private RecipeDetailRvAdapter mAdapter;
+    @SuppressWarnings("unused")
+    private static final String TAG = RecipeDetailActivity.class.getSimpleName();
+
+    RecipeDetailFragment mRecipeFragment;
 
     private Recipe mRecipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_recipe_detail);
 
         mRecipe = getRecipe(savedInstanceState);
 
-        ButterKnife.bind(this);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_recipe_detail);
 
         getSupportActionBar().setTitle(mRecipe.name);
-        mIngredients.setText(Text.ingredientsToString(mRecipe.ingredients));
-
-        initRecyclerView();
+        mRecipeFragment = (RecipeDetailFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_recipe_detail);
+        mRecipeFragment.displayRecipe(mRecipe);
     }
 
     @Override
@@ -64,11 +53,9 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         if (state != null) {
             // restoring activity
             recipe = state.getParcelable(TAG_PARCEL_RECIPE);
-            Log.d(TAG, "got recipe from state");
         } else {
             // starting activity
             recipe = getIntent().getParcelableExtra(TAG_PARCEL_RECIPE);
-            Log.d(TAG, "got recipe from extras");
         }
 
         if (recipe == null) {
@@ -77,15 +64,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         return recipe;
     }
 
-    private void initRecyclerView() {
-        mRecycler.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mRecycler.setNestedScrollingEnabled(false);
-//        mRecycler.setLayoutManager(new NoScrollLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-        mAdapter = new RecipeDetailRvAdapter(this);
-        mAdapter.setSteps(mRecipe.steps);
-        mRecycler.setAdapter(mAdapter);
-    }
 
     private void launchStepActivity(List<Step> stepList, int stepNumber) {
         Intent intent = new Intent(this, StepActivity.class);
