@@ -18,8 +18,9 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     private static final String TAG = RecipeDetailActivity.class.getSimpleName();
 
     RecipeDetailFragment mRecipeFragment;
-
+    StepFragment mStepFragment;
     private Recipe mRecipe;
+    private boolean mTwoPane = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         mRecipeFragment = (RecipeDetailFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_recipe_detail);
         mRecipeFragment.displayRecipe(mRecipe);
+
+        mStepFragment = (StepFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_step);
+        mTwoPane = (mStepFragment != null);
+
+        if (mTwoPane) mStepFragment.setSteps(mRecipe.steps);
     }
 
     @Override
@@ -43,7 +50,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
     @Override
     public void onStepClicked(Step step) {
-        launchStepActivity(mRecipe.steps, step.number);
+        if (mTwoPane) mStepFragment.setPosition(step.number);
+        else launchStepActivity(mRecipe.steps, step.number);
     }
 
     private Recipe getRecipe(Bundle state) {

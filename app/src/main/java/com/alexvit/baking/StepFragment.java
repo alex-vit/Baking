@@ -54,12 +54,11 @@ public class StepFragment extends Fragment {
     }
 
     public void setSteps(List<Step> steps) {
-        setSteps(steps, 0);
-    }
-
-    public void setSteps(List<Step> steps, int position) {
         mSteps = steps;
         mPagerAdapter.notifyDataSetChanged();
+    }
+
+    public void setPosition(int position) {
         mViewPager.setCurrentItem(position);
     }
 
