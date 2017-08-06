@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alexvit.baking.entity.Step;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 
 import java.util.List;
 
@@ -27,6 +31,8 @@ public class StepFragment extends Fragment {
     ViewPager mViewPager;
 
     StepsPagerAdapter mPagerAdapter;
+    private SimpleExoPlayer mPlayer;
+
 
     private List<Step> mSteps;
 
@@ -49,12 +55,6 @@ public class StepFragment extends Fragment {
         initPager();
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
-    }
-
     public void setSteps(List<Step> steps) {
         mSteps = steps;
         mPagerAdapter.notifyDataSetChanged();
@@ -64,6 +64,16 @@ public class StepFragment extends Fragment {
         mViewPager.setCurrentItem(position);
     }
 
+    public SimpleExoPlayer getPlayer() {
+        if (mPlayer == null) {
+            TrackSelector trackSelector = new DefaultTrackSelector();
+            mPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
+        }
+
+        mPlayer.stop();
+        return mPlayer;
+    }
+
     private void initPager() {
         int margin = calculateMargin();
         mViewPager.setPageMargin(-margin);
@@ -71,15 +81,16 @@ public class StepFragment extends Fragment {
 
         mPagerAdapter = new StepsPagerAdapter(getChildFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
-            private int mLastActive = 0;
+        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            private int mLastPage = mViewPager.getCurrentItem();
 
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                ((StepItemFragment) mPagerAdapter.getItem(mLastActive)).pauseVideo();
-                mLastActive = position;
+
+                ((StepItemFragment) mPagerAdapter.getItem(mLastPage)).onPrevious();
+                mLastPage = position;
             }
         });
     }
@@ -92,7 +103,7 @@ public class StepFragment extends Fragment {
                 getResources().getDisplayMetrics());
     }
 
-    private class StepsPagerAdapter extends FragmentPagerAdapter {
+    private class StepsPagerAdapter extends FragmentStatePagerAdapter {
 
         StepsPagerAdapter(FragmentManager manager) {
             super(manager);

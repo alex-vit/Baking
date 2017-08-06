@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,12 @@ import com.alexvit.baking.entity.Step;
 import com.alexvit.baking.loader.BitmapAsyncTaskLoader;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,33 +46,36 @@ public class StepItemFragment extends Fragment
     private int LOADER_ID;
     private Step mStep;
     private SimpleExoPlayer mPlayer;
+    private boolean mShouldInitPlayer = false;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Step step = (Step) getArguments().get(KEY_ARG_STEP);
+        if (step == null) throw new NullPointerException("No step passed in arguments.");
+        mStep = step;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        Step step = (Step) getArguments().get(KEY_ARG_STEP);
-        if (step == null) throw new NullPointerException("No step passed in arguments.");
-        mStep = step;
-
         View rootView = inflater.inflate(R.layout.fragment_step_item, container, false);
         ButterKnife.bind(this, rootView);
 
-        tvNumber.setText(String.valueOf(step.number));
-        tvShortDescription.setText(step.shortDescription);
-        tvDescription.setText(step.description);
+        if (mShouldInitPlayer) initPlayer();
+        Log.d("frag: ", "am current: " + mShouldInitPlayer);
 
-        LOADER_ID = 100 + step.number;
+        tvNumber.setText(String.valueOf(mStep.number));
+        tvShortDescription.setText(mStep.shortDescription);
+        tvDescription.setText(mStep.description);
+
+        initPlayer();
+        LOADER_ID = 100 + mStep.number;
+        loadBitmap(mStep.thumbnailURL);
 
         return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        loadBitmap(mStep.thumbnailURL);
-        initPlayer(mStep.videoURL);
     }
 
     @Override
@@ -87,7 +94,32 @@ public class StepItemFragment extends Fragment
 
     }
 
-    public void pauseVideo() {
+    public void onPrevious() {
+        Log.d("frag: ", "onPrevious");
+        if (mPlayer != null) mPlayer.setPlayWhenReady(false);
+    }
+
+    private void initPlayer() {
+
+        String urlString = mStep.videoURL;
+        if (urlString == null || urlString.isEmpty()) return;
+        mPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), new DefaultTrackSelector());
+
+        Uri uri = Uri.parse(urlString);
+        String userAgent = this.getClass().getSimpleName() + " -- Baking app";
+
+        MediaSource mediaSource = new ExtractorMediaSource(uri,
+                new DefaultDataSourceFactory(getContext(), userAgent),
+                new DefaultExtractorsFactory(),
+                null,
+                null);
+        mPlayer.prepare(mediaSource, true, true);
+        mPlayerView.setPlayer(mPlayer);
+
+        ViewGroup.LayoutParams layoutParams = mPlayerView.getLayoutParams();
+        layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        mPlayerView.setLayoutParams(layoutParams);
+        mPlayerView.setVisibility(View.VISIBLE);
     }
 
     private void loadBitmap(String url) {
@@ -97,16 +129,5 @@ public class StepItemFragment extends Fragment
         Bundle args = new Bundle();
         args.putString(LOADER_ARG_URL, url);
         getLoaderManager().initLoader(LOADER_ID, args, this);
-    }
-
-    private void initPlayer(String urlString) {
-
-        if (mPlayer != null) return;
-
-        Uri uri = Uri.parse(urlString);
-        TrackSelector trackSelector = new DefaultTrackSelector();
-        mPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
-
-        String userAgent = this.getClass().getSimpleName() + "-- Baking app";
     }
 }
