@@ -8,6 +8,11 @@
 
     <include layout="@layout/item_step" />
 
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/step_video"
+        android:layout_width="match_parent"
+        android:layout_height="256dp" />
+
     <TextView
         android:id="@+id/step_description"
         android:layout_width="match_parent"

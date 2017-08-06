@@ -27,6 +27,7 @@ public class StepActivity extends AppCompatActivity {
 
         mFragment = (StepFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_step);
         mFragment.setSteps(getSteps());
+        mFragment.setPosition(getStepNumber());
     }
 
     private List<Step> getSteps() {
