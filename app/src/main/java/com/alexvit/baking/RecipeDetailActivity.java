@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.alexvit.baking.entity.Recipe;
@@ -18,8 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RecipeDetailActivity extends AppCompatActivity
-        implements RecipeDetailRvAdapter.OnStepClickedListener,
-        StepFragment.OnPageNavigationListener {
+        implements RecipeDetailRvAdapter.OnStepClickedListener {
 
     public static final String TAG_PARCEL_RECIPE = "TAG_PARCEL_RECIPE";
 
@@ -53,8 +51,9 @@ public class RecipeDetailActivity extends AppCompatActivity
 
         mTwoPane = (mStepFragmentContainer != null);
 
-        if (mTwoPane)
-            updateFragment(mRecipe.steps.get(0), mRecipe.steps.size());
+        if (mTwoPane) {
+            initStepFragment();
+        }
     }
 
     @Override
@@ -64,26 +63,10 @@ public class RecipeDetailActivity extends AppCompatActivity
     }
 
     @Override
-    public void onStepClicked(Step step) {
+    public void onStepClicked(int position) {
         if (mTwoPane) {
-            updateFragment(step, mRecipe.steps.size());
-        } else launchStepActivity(mRecipe.steps, step.number);
-    }
-
-    @Override
-    public void onPrev(int position) {
-        int count = mRecipe.steps.size();
-        int index = Math.max(0, position - 1);
-        Step step = mRecipe.steps.get(index);
-        mStepFragment.onDataChanged(step, count);
-    }
-
-    @Override
-    public void onNext(int position) {
-        int count = mRecipe.steps.size();
-        int index = Math.min(position + 1, count - 1);
-        Step step = mRecipe.steps.get(index);
-        mStepFragment.onDataChanged(step, count);
+            mStepFragment.setPosition(position);
+        } else launchStepActivity(mRecipe.steps, position);
     }
 
     private Recipe getRecipe(Bundle state) {
@@ -105,29 +88,24 @@ public class RecipeDetailActivity extends AppCompatActivity
     }
 
 
-    private void launchStepActivity(List<Step> stepList, int stepNumber) {
+    private void launchStepActivity(List<Step> steps, int position) {
         Intent intent = new Intent(this, StepActivity.class);
-        ArrayList<Step> steps = new ArrayList<>(stepList);
-        intent.putParcelableArrayListExtra(StepActivity.TAG_PARCEL_STEP_LIST, steps);
-        intent.putExtra(StepActivity.TAG_PARCEL_STEP_NUMBER, stepNumber);
+        intent.putParcelableArrayListExtra(StepActivity.TAG_PARCEL_STEPS, new ArrayList<>(steps));
+        intent.putExtra(StepActivity.TAG_PARCEL_POSITION, position);
         startActivity(intent);
     }
 
-    private void updateFragment(Step step, int count) {
+    private void initStepFragment() {
+        mStepFragment = (StepFragment) getSupportFragmentManager()
+                .findFragmentByTag(STEP_FRAGMENT_TAG);
 
-        mStepFragment = (StepFragment) getSupportFragmentManager().findFragmentByTag(STEP_FRAGMENT_TAG);
-
-        if (mStepFragment != null) {
-            mStepFragment.onDataChanged(step, count);
-        } else {
-            mStepFragment = StepFragment.newInstance(step, count);
+        if (mStepFragment == null) {
+            mStepFragment = StepFragment.newInstance(mRecipe.steps);
             mStepFragment.setRetainInstance(true);
 
             FragmentTransaction t = getSupportFragmentManager().beginTransaction();
             t.replace(mStepFragmentContainer.getId(), mStepFragment, STEP_FRAGMENT_TAG);
             t.commit();
         }
-
     }
-
 }
