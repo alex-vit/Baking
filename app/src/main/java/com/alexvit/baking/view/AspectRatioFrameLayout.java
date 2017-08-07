@@ -2,29 +2,32 @@ package com.alexvit.baking.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.widget.FrameLayout;
 
 import com.alexvit.baking.R;
 
 /**
- * Created by Aleksandrs Vitjukovs on 8/1/2017.
+ * Created by alexander.vitjukov on 07.08.2017.
  */
 
-public class AspectRatioImageView extends android.support.v7.widget.AppCompatImageView {
+public class AspectRatioFrameLayout extends FrameLayout {
 
     private static final float RATIO = 1.618F;
 
     private float aspectRatio;
 
-    public AspectRatioImageView(Context context) {
-        this(context, null);
+    public AspectRatioFrameLayout(@NonNull Context context) {
+        super(context);
     }
 
-    public AspectRatioImageView(Context context, AttributeSet attrs) {
+    public AspectRatioFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
 
-        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.AspectRatioImageView);
-        aspectRatio = array.getFloat(R.styleable.AspectRatioImageView_aspectRatio, RATIO);
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.AspectRatioFrameLayout);
+        aspectRatio = array.getFloat(R.styleable.AspectRatioFrameLayout_aspectRatio, RATIO);
         array.recycle();
     }
 
@@ -48,4 +51,5 @@ public class AspectRatioImageView extends android.support.v7.widget.AppCompatIma
             requestLayout();
         }
     }
+
 }

@@ -3,9 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <include layout="@layout/item_step" />
+
+    <com.alexvit.baking.view.AspectRatioFrameLayout
+        android:layout_width="match_parent"
+        app:aspectRatio="1.78"
+        android:layout_height="wrap_content">
+
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/step_video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_small"
+            android:visibility="gone" />
+
+    </com.alexvit.baking.view.AspectRatioFrameLayout>
 
     <TextView
         android:id="@+id/step_description"

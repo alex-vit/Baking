@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -14,13 +15,20 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.alexvit.baking.view.AspectRatioImageView
-                android:id="@+id/recipe_image"
+            <com.alexvit.baking.view.AspectRatioFrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/recipe" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/recipe_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/alt_recipe_image"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/recipe" />
+
+            </com.alexvit.baking.view.AspectRatioFrameLayout>
 
             <TextView
                 android:id="@+id/recipe_name"
