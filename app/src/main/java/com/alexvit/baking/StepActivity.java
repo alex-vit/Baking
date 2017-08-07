@@ -21,7 +21,8 @@ import butterknife.ButterKnife;
  * Created by Aleksandrs Vitjukovs on 8/5/2017.
  */
 
-public class StepActivity extends AppCompatActivity {
+public class StepActivity extends AppCompatActivity
+        implements StepFragment.OnPageNavigationListener {
 
     public static final String TAG_PARCEL_STEP_LIST = "TAG_PARCEL_STEP_LIST";
     public static final String TAG_PARCEL_STEP_NUMBER = "TAG_PARCEL_STEP_NUMBER";
@@ -51,6 +52,20 @@ public class StepActivity extends AppCompatActivity {
             t.replace(mStepFragmentContainer.getId(), mStepFragment);
             t.commit();
         }
+    }
+
+    @Override
+    public void onPrev(int position) {
+        mNumber = Math.max(0, position - 1);
+        Step step = mSteps.get(mNumber);
+        mStepFragment.onDataChanged(step, mSteps.size());
+    }
+
+    @Override
+    public void onNext(int position) {
+        mNumber = Math.min(position + 1, mSteps.size() - 1);
+        Step step = mSteps.get(mNumber);
+        mStepFragment.onDataChanged(step, mSteps.size());
     }
 
     private List<Step> getSteps() {

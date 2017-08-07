@@ -1,5 +1,6 @@
 package com.alexvit.baking;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import com.alexvit.baking.entity.Step;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 public class StepFragment extends Fragment {
@@ -26,11 +28,13 @@ public class StepFragment extends Fragment {
     TextView tvShortDescription;
     @BindView(R.id.step_description)
     TextView tvDescription;
+
     @BindView(R.id.prev_step)
     Button mPrevButton;
     @BindView(R.id.next_step)
     Button mNextButton;
 
+    private OnPageNavigationListener mListener;
     private Step mStep = null;
     private int mCount = 0;
 
@@ -44,6 +48,17 @@ public class StepFragment extends Fragment {
         StepFragment fragment = new StepFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            mListener = (OnPageNavigationListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException("Parent should implement " + OnPageNavigationListener.class.getSimpleName());
+        }
     }
 
     @Override
@@ -120,5 +135,20 @@ public class StepFragment extends Fragment {
             count = bundle.getInt(KEY_ARG_COUNT);
         }
         return count;
+    }
+
+    @OnClick(R.id.prev_step)
+    void onPrev() {
+        mListener.onPrev(mStep.number);
+    }
+
+    @OnClick(R.id.next_step)
+    void onNext() {
+        mListener.onNext(mStep.number);
+    }
+
+    public interface OnPageNavigationListener {
+        void onPrev(int position);
+        void onNext(int position);
     }
 }

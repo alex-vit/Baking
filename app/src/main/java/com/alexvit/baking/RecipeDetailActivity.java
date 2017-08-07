@@ -17,7 +17,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailRvAdapter.OnStepClickedListener {
+public class RecipeDetailActivity extends AppCompatActivity
+        implements RecipeDetailRvAdapter.OnStepClickedListener,
+        StepFragment.OnPageNavigationListener {
 
     public static final String TAG_PARCEL_RECIPE = "TAG_PARCEL_RECIPE";
 
@@ -33,7 +35,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     StepFragment mStepFragment;
 
     private Recipe mRecipe;
-    private int mPosition;
     private boolean mTwoPane = false;
 
     @Override
@@ -52,7 +53,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
         mTwoPane = (mStepFragmentContainer != null);
 
-        if (mTwoPane && savedInstanceState == null)
+        if (mTwoPane)
             updateFragment(mRecipe.steps.get(0), mRecipe.steps.size());
     }
 
@@ -67,6 +68,22 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         if (mTwoPane) {
             updateFragment(step, mRecipe.steps.size());
         } else launchStepActivity(mRecipe.steps, step.number);
+    }
+
+    @Override
+    public void onPrev(int position) {
+        int count = mRecipe.steps.size();
+        int index = Math.max(0, position - 1);
+        Step step = mRecipe.steps.get(index);
+        mStepFragment.onDataChanged(step, count);
+    }
+
+    @Override
+    public void onNext(int position) {
+        int count = mRecipe.steps.size();
+        int index = Math.min(position + 1, count - 1);
+        Step step = mRecipe.steps.get(index);
+        mStepFragment.onDataChanged(step, count);
     }
 
     private Recipe getRecipe(Bundle state) {
@@ -102,7 +119,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
         if (mStepFragment != null) {
             mStepFragment.onDataChanged(step, count);
-            Log.d("frag: ", "on data changed");
         } else {
             mStepFragment = StepFragment.newInstance(step, count);
             mStepFragment.setRetainInstance(true);
@@ -110,7 +126,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             FragmentTransaction t = getSupportFragmentManager().beginTransaction();
             t.replace(mStepFragmentContainer.getId(), mStepFragment, STEP_FRAGMENT_TAG);
             t.commit();
-            Log.d("frag: ", "new fragment");
         }
 
     }
