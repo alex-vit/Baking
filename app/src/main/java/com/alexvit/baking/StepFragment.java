@@ -85,26 +85,8 @@ public class StepFragment extends Fragment {
     }
 
     public void setPosition(int position) {
-
         mPosition = position;
-
-        boolean hasPrev = (position > 0);
-        boolean hasNext = (position < mSteps.size() - 1);
-
-        Step step = mSteps.get(position);
-
-        tvNumber.setText(String.valueOf(step.number));
-        tvShortDescription.setText(step.shortDescription);
-        tvDescription.setText(step.description);
-
-        mPrevButton.setVisibility((hasPrev)
-                ? View.VISIBLE
-                : View.INVISIBLE
-        );
-        mNextButton.setVisibility((hasNext)
-                ? View.VISIBLE
-                : View.INVISIBLE
-        );
+        updateUi();
     }
 
     private void updateUi() {
@@ -157,11 +139,11 @@ public class StepFragment extends Fragment {
 
     @OnClick(R.id.prev_step)
     void onPrev() {
-
+        setPosition(mPosition - 1);
     }
 
     @OnClick(R.id.next_step)
     void onNext() {
-
+        setPosition(mPosition + 1);
     }
 }
