@@ -101,7 +101,6 @@ public class RecipeDetailActivity extends AppCompatActivity
 
         if (mStepFragment == null) {
             mStepFragment = StepFragment.newInstance(mRecipe.steps);
-            mStepFragment.setRetainInstance(true);
 
             FragmentTransaction t = getSupportFragmentManager().beginTransaction();
             t.replace(mStepFragmentContainer.getId(), mStepFragment, STEP_FRAGMENT_TAG);
