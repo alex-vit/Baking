@@ -44,6 +44,8 @@ public class RecipesAsyncTaskLoader extends AsyncTaskLoader<List<Recipe>> {
 
         String urlString = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
+        List<Recipe> recipes = null;
+
         try {
             URL url = new URL(urlString);
             connection = (HttpURLConnection) url.openConnection();
@@ -51,7 +53,7 @@ public class RecipesAsyncTaskLoader extends AsyncTaskLoader<List<Recipe>> {
             Scanner scanner = new Scanner(in);
             scanner.useDelimiter("\\A");
             String jsonString = scanner.next();
-            mRecipes = Arrays.asList(new Gson().fromJson(jsonString, Recipe[].class));
+            recipes = Arrays.asList(new Gson().fromJson(jsonString, Recipe[].class));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -60,6 +62,13 @@ public class RecipesAsyncTaskLoader extends AsyncTaskLoader<List<Recipe>> {
             if (connection != null) connection.disconnect();
         }
 
-        return mRecipes;
+        return recipes;
+    }
+
+    @Override
+    public void deliverResult(List<Recipe> recipes) {
+        if (recipes != null) mRecipes = recipes;
+
+        super.deliverResult(recipes);
     }
 }

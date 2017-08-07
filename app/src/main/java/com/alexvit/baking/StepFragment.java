@@ -1,12 +1,7 @@
 package com.alexvit.baking;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +9,34 @@ import android.widget.TextView;
 
 import com.alexvit.baking.entity.Step;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.alexvit.baking.StepFragment.StepItemFragment.KEY_ARG_STEP;
 
 
 public class StepFragment extends Fragment {
 
-    StepsPagerAdapter mPagerAdapter;
-    ViewPager mViewPager;
+    public static final String KEY_ARG_STEP = "KEY_ARG_STEP";
+    public static final String KEY_ARG_POSITION = "KEY_ARG_POSITION";
+    public static final String KEY_ARG_HAS_NEXT = "KEY_ARG_HAS_NEXT";
+    public static final String KEY_ARG_HAS_PREV = "KEY_ARG_HAS_PREV";
 
-    private List<Step> mSteps;
+    @BindView(R.id.step_number)
+    TextView tvNumber;
+    @BindView(R.id.step_short_description)
+    TextView tvShortDescription;
+    @BindView(R.id.step_description)
+    TextView tvDescription;
+
+    /* TODO
+     * 1. add buttons for prev and next
+     * 2. add interface for activities to implement (onNext, onPrev)
+     * 3. onAttach - cast and save activity into an mListener
+     */
+
+    private Step mStep;
+    private int mPosition;
+    private boolean mHasNext;
+    private boolean mHasPrev;
 
     public StepFragment() {
         // Required empty public constructor
@@ -37,100 +46,32 @@ public class StepFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_step, container, false);
+        mStep = (Step) getArguments().get(KEY_ARG_STEP);
+        if (mStep == null) throw new NullPointerException("No step passed in arguments. Use newInstance.");
+        mPosition = getArguments().getInt(KEY_ARG_POSITION, 0);
+        mHasNext = getArguments().getBoolean(KEY_ARG_HAS_NEXT);
+        mHasPrev = getArguments().getBoolean(KEY_ARG_HAS_PREV);
+
+        View rootView = inflater.inflate(R.layout.fragment_step, container, false);
+        ButterKnife.bind(this, rootView);
+
+        tvNumber.setText(String.valueOf(mStep.number));
+        tvShortDescription.setText(mStep.shortDescription);
+        tvDescription.setText(mStep.description);
+
+        return rootView;
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public static StepFragment newInstance(Step step, int position, boolean hasNext, boolean hasPrev) {
 
-        initPager();
+        Bundle args = new Bundle();
+        args.putParcelable(KEY_ARG_STEP, step);
+        args.putInt(KEY_ARG_POSITION, position);
+        args.putBoolean(KEY_ARG_HAS_NEXT, hasNext);
+        args.putBoolean(KEY_ARG_HAS_PREV, hasPrev);
+
+        StepFragment fragment = new StepFragment();
+        fragment.setArguments(args);
+        return fragment;
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
-    }
-
-    public void setSteps(List<Step> steps) {
-        mSteps = steps;
-        mPagerAdapter.notifyDataSetChanged();
-    }
-
-    public void setPosition(int position) {
-        mViewPager.setCurrentItem(position);
-    }
-
-    private void initPager() {
-        mViewPager = (ViewPager) getView().findViewById(R.id.pager);
-
-        int margin = calculateMargin();
-        mViewPager.setPageMargin(-margin);
-        mViewPager.setOffscreenPageLimit(2);
-
-        mPagerAdapter = new StepsPagerAdapter(getChildFragmentManager());
-        mViewPager.setAdapter(mPagerAdapter);
-    }
-
-    private int calculateMargin() {
-        int pagePaddingDp = (int) (getResources().getDimension(R.dimen.padding_pager_item)
-                / getResources().getDisplayMetrics().density);
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                pagePaddingDp * 2,
-                getResources().getDisplayMetrics());
-    }
-
-    public static class StepItemFragment extends Fragment {
-
-        public static final String KEY_ARG_STEP = "KEY_ARG_STEP";
-
-        @BindView(R.id.step_number)
-        TextView tvNumber;
-        @BindView(R.id.step_short_description)
-        TextView tvShortDescription;
-        @BindView(R.id.step_description)
-        TextView tvDescription;
-
-        @Nullable
-        @Override
-        public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-            Step step = (Step) getArguments().get(KEY_ARG_STEP);
-            if (step == null) throw new NullPointerException("No step passed in arguments.");
-
-            View rootView = inflater.inflate(R.layout.fragment_step_item, container, false);
-            ButterKnife.bind(this, rootView);
-
-            tvNumber.setText(String.valueOf(step.number));
-            tvShortDescription.setText(step.shortDescription);
-            tvDescription.setText(step.description);
-
-            return rootView;
-        }
-    }
-
-    class StepsPagerAdapter extends FragmentPagerAdapter {
-
-        StepsPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment fragment = new StepItemFragment();
-
-            Bundle args = new Bundle();
-            args.putParcelable(KEY_ARG_STEP, mSteps.get(position));
-
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return (mSteps == null) ? 0 : mSteps.size();
-        }
-    }
-
 }

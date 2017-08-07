@@ -12,11 +12,11 @@
         android:layout_height="match_parent"
         android:layout_weight="1" />
 
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/fragment_step"
-        android:name="com.alexvit.baking.StepFragment"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/step_fragment_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2" />
+        android:layout_weight="2"
+        android:orientation="vertical" />
 
 </LinearLayout>

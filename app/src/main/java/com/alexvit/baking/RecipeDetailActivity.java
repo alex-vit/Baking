@@ -2,13 +2,19 @@ package com.alexvit.baking;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.LinearLayout;
 
 import com.alexvit.baking.entity.Recipe;
 import com.alexvit.baking.entity.Step;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Optional;
 
 public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailRvAdapter.OnStepClickedListener {
 
@@ -17,8 +23,11 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     @SuppressWarnings("unused")
     private static final String TAG = RecipeDetailActivity.class.getSimpleName();
 
+    @Nullable
+    @BindView(R.id.step_fragment_container)
+    LinearLayout mStepFragmentContainer;
+
     RecipeDetailFragment mRecipeFragment;
-    StepFragment mStepFragment;
     private Recipe mRecipe;
     private boolean mTwoPane = false;
 
@@ -29,17 +38,21 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_detail);
+        ButterKnife.bind(this);
 
         getSupportActionBar().setTitle(mRecipe.name);
         mRecipeFragment = (RecipeDetailFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_recipe_detail);
         mRecipeFragment.displayRecipe(mRecipe);
 
-        mStepFragment = (StepFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_step);
-        mTwoPane = (mStepFragment != null);
+        mTwoPane = (mStepFragmentContainer != null);
 
-        if (mTwoPane) mStepFragment.setSteps(mRecipe.steps);
+        if (mTwoPane) {
+            StepFragment fragment = StepActivity.configureFragment(mRecipe.steps, 0);
+            StepActivity.displayFragment(getSupportFragmentManager(),
+                    mStepFragmentContainer.getId(),
+                    fragment);
+        }
     }
 
     @Override
@@ -50,7 +63,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
     @Override
     public void onStepClicked(Step step) {
-        if (mTwoPane) mStepFragment.setPosition(step.number);
+        if (mTwoPane) {
+            StepFragment fragment = StepActivity.configureFragment(mRecipe.steps, step.number);
+            StepActivity.displayFragment(getSupportFragmentManager(),
+                    mStepFragmentContainer.getId(),
+                    fragment);
+        }
         else launchStepActivity(mRecipe.steps, step.number);
     }
 

@@ -34,7 +34,7 @@ public class RecipeListActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         initRecyclerView();
-        getSupportLoaderManager().initLoader(0, null, this).forceLoad();
+        getSupportLoaderManager().initLoader(0, null, this);
     }
 
     @Override
