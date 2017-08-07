@@ -27,9 +27,12 @@ public class StepActivity extends AppCompatActivity {
     public static final String TAG_PARCEL_STEP_NUMBER = "TAG_PARCEL_STEP_NUMBER";
 
     @BindView(R.id.step_fragment_container)
-    LinearLayout mFragmentContainer;
+    LinearLayout mStepFragmentContainer;
+
+    StepFragment mStepFragment;
 
     private List<Step> mSteps;
+    private int mNumber = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,26 +40,17 @@ public class StepActivity extends AppCompatActivity {
         setContentView(R.layout.activity_step);
         ButterKnife.bind(this);
 
-        mSteps = getSteps();
-        int position = getStepNumber();
+        if (savedInstanceState != null) {
+            // restore?
+        } else {
+            mSteps = getSteps();
+            mNumber = getStepNumber();
 
-        StepFragment fragment = configureFragment(mSteps, position);
-        displayFragment(getSupportFragmentManager(), mFragmentContainer.getId(), fragment);
-    }
-
-    static StepFragment configureFragment(List<Step> steps, int position) {
-        int total = steps.size();
-        boolean hasNext = (position < total - 1);
-        boolean hasPrev = (position > 0);
-        Step step = steps.get(position);
-
-        return StepFragment.newInstance(step, position, hasNext, hasPrev);
-    }
-
-    static void displayFragment(FragmentManager fm, int container, Fragment fragment) {
-        FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(container, fragment);
-        transaction.commit();
+            mStepFragment = StepFragment.newInstance(mSteps.get(mNumber), mSteps.size());
+            FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+            t.replace(mStepFragmentContainer.getId(), mStepFragment);
+            t.commit();
+        }
     }
 
     private List<Step> getSteps() {

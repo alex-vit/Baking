@@ -3,7 +3,9 @@ package com.alexvit.baking;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.alexvit.baking.entity.Recipe;
@@ -14,12 +16,12 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Optional;
 
 public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailRvAdapter.OnStepClickedListener {
 
     public static final String TAG_PARCEL_RECIPE = "TAG_PARCEL_RECIPE";
 
+    private static final String STEP_FRAGMENT_TAG = "STEP_FRAGMENT_TAG";
     @SuppressWarnings("unused")
     private static final String TAG = RecipeDetailActivity.class.getSimpleName();
 
@@ -28,7 +30,10 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     LinearLayout mStepFragmentContainer;
 
     RecipeDetailFragment mRecipeFragment;
+    StepFragment mStepFragment;
+
     private Recipe mRecipe;
+    private int mPosition;
     private boolean mTwoPane = false;
 
     @Override
@@ -47,12 +52,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
         mTwoPane = (mStepFragmentContainer != null);
 
-        if (mTwoPane) {
-            StepFragment fragment = StepActivity.configureFragment(mRecipe.steps, 0);
-            StepActivity.displayFragment(getSupportFragmentManager(),
-                    mStepFragmentContainer.getId(),
-                    fragment);
-        }
+        if (mTwoPane && savedInstanceState == null)
+            updateFragment(mRecipe.steps.get(0), mRecipe.steps.size());
     }
 
     @Override
@@ -64,12 +65,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     @Override
     public void onStepClicked(Step step) {
         if (mTwoPane) {
-            StepFragment fragment = StepActivity.configureFragment(mRecipe.steps, step.number);
-            StepActivity.displayFragment(getSupportFragmentManager(),
-                    mStepFragmentContainer.getId(),
-                    fragment);
-        }
-        else launchStepActivity(mRecipe.steps, step.number);
+            updateFragment(step, mRecipe.steps.size());
+        } else launchStepActivity(mRecipe.steps, step.number);
     }
 
     private Recipe getRecipe(Bundle state) {
@@ -97,6 +94,25 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         intent.putParcelableArrayListExtra(StepActivity.TAG_PARCEL_STEP_LIST, steps);
         intent.putExtra(StepActivity.TAG_PARCEL_STEP_NUMBER, stepNumber);
         startActivity(intent);
+    }
+
+    private void updateFragment(Step step, int count) {
+
+        mStepFragment = (StepFragment) getSupportFragmentManager().findFragmentByTag(STEP_FRAGMENT_TAG);
+
+        if (mStepFragment != null) {
+            mStepFragment.onDataChanged(step, count);
+            Log.d("frag: ", "on data changed");
+        } else {
+            mStepFragment = StepFragment.newInstance(step, count);
+            mStepFragment.setRetainInstance(true);
+
+            FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+            t.replace(mStepFragmentContainer.getId(), mStepFragment, STEP_FRAGMENT_TAG);
+            t.commit();
+            Log.d("frag: ", "new fragment");
+        }
+
     }
 
 }
