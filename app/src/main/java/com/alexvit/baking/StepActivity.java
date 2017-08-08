@@ -1,9 +1,12 @@
 package com.alexvit.baking;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.alexvit.baking.entity.Step;
@@ -34,6 +37,9 @@ public class StepActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (isLandscape()) goFullScreen();
+
         setContentView(R.layout.activity_step);
         ButterKnife.bind(this);
 
@@ -50,6 +56,16 @@ public class StepActivity extends AppCompatActivity {
         }
     }
 
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        }
+//    }
+//
     private List<Step> getSteps() {
         ArrayList<Step> steps = getIntent().getParcelableArrayListExtra(TAG_PARCEL_STEPS);
         if (steps == null) {
@@ -60,5 +76,16 @@ public class StepActivity extends AppCompatActivity {
 
     private int getPosition() {
         return getIntent().getIntExtra(TAG_PARCEL_POSITION, 0);
+    }
+
+    private boolean isLandscape() {
+        int orientation = getResources().getConfiguration().orientation;
+        return orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    private void goFullScreen() {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getSupportActionBar().hide();
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }
