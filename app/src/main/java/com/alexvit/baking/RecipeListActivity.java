@@ -2,23 +2,22 @@ package com.alexvit.baking;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
-import com.alexvit.baking.loader.RecipesAsyncTaskLoader;
+import com.alexvit.baking.data.RecipeService;
 import com.alexvit.baking.entity.Recipe;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RecipeListActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<List<Recipe>>,
-        RecipeListRvAdapter.OnRecipeClickedListener {
+        implements RecipeListRvAdapter.OnRecipeClickedListener {
 
     private static final String TAG = RecipeListActivity.class.getSimpleName();
 
@@ -34,22 +33,11 @@ public class RecipeListActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         initRecyclerView();
-        getSupportLoaderManager().initLoader(0, null, this);
+        loadRecipes();
     }
 
-    @Override
-    public Loader<List<Recipe>> onCreateLoader(int id, Bundle args) {
-        return new RecipesAsyncTaskLoader(this);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Recipe>> loader, List<Recipe> data) {
-        mAdapter.setRecipes(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Recipe>> loader) {
-
+    public void onRecipesLoaded(List<Recipe> recipes) {
+        mAdapter.setRecipes(recipes);
     }
 
     @Override
@@ -60,6 +48,23 @@ public class RecipeListActivity extends AppCompatActivity
     private void initRecyclerView() {
         mAdapter = new RecipeListRvAdapter(this);
         mRvRecipes.setAdapter(mAdapter);
+    }
+
+    private void loadRecipes() {
+        RecipeService service = ((App) getApplication()).getRecipeService();
+        Call<List<Recipe>> call = service.listRecipes();
+        call.enqueue(new Callback<List<Recipe>>() {
+            @Override
+            public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
+                List<Recipe> recipes = response.body();
+                onRecipesLoaded(recipes);
+            }
+
+            @Override
+            public void onFailure(Call<List<Recipe>> call, Throwable t) {
+
+            }
+        });
     }
 
     private void launchRecipeDetail(Recipe recipe) {

@@ -38,6 +38,7 @@ public class StepActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // call before setContentView
         if (isLandscape()) goFullScreen();
 
         setContentView(R.layout.activity_step);
@@ -84,6 +85,7 @@ public class StepActivity extends AppCompatActivity {
     }
 
     private void goFullScreen() {
+        // request feature before getSupportActionBar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
