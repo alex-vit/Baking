@@ -1,5 +1,6 @@
 package com.alexvit.baking;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.alexvit.baking.entity.Step;
@@ -39,7 +41,7 @@ public class StepFragment extends Fragment {
     @BindView(R.id.step_short_description)
     TextView tvShortDescription;
     @BindView(R.id.player_container)
-    AspectRatioFrameLayout mPlayerContainer;
+    FrameLayout mPlayerContainer;
     @BindView(R.id.player_view)
     SimpleExoPlayerView mPlayerView;
     @BindView(R.id.step_description)
