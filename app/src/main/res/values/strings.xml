@@ -7,4 +7,6 @@
     <string name="previous">Previous</string>
     <string name="next">Next</string>
     <string name="alt_recipe_image">Recipe image</string>
+    <string name="appwidget_text">Open any recipe, and its ingredients will appear here.</string>
+    <string name="add_widget">Add widget</string>
 </resources>

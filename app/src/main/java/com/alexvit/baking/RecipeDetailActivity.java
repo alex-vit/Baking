@@ -1,5 +1,7 @@
 package com.alexvit.baking;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +17,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.alexvit.baking.IngredientsWidgetProvider.updateIngredientWidgets;
 
 public class RecipeDetailActivity extends AppCompatActivity
         implements RecipeDetailRvAdapter.OnStepClickedListener {
@@ -54,6 +58,8 @@ public class RecipeDetailActivity extends AppCompatActivity
         if (mTwoPane) {
             initStepFragment();
         }
+
+        updateWidgets(mRecipe);
     }
 
     @Override
@@ -93,6 +99,14 @@ public class RecipeDetailActivity extends AppCompatActivity
         intent.putParcelableArrayListExtra(StepActivity.TAG_PARCEL_STEPS, new ArrayList<>(steps));
         intent.putExtra(StepActivity.TAG_PARCEL_POSITION, position);
         startActivity(intent);
+    }
+
+    private void updateWidgets(Recipe recipe) {
+        AppWidgetManager manager = AppWidgetManager.getInstance(this);
+        int[] ids = manager.getAppWidgetIds(
+                new ComponentName(this, IngredientsWidgetProvider.class));
+
+        updateIngredientWidgets(this, manager, recipe, ids);
     }
 
     private void initStepFragment() {

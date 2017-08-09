@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".RecipeListActivity"
             android:launchMode="singleTop">
@@ -22,16 +21,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".RecipeDetailActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".RecipeListActivity" />
-
         <activity
             android:name=".StepActivity"
             android:parentActivityName=".RecipeDetailActivity" />
 
+        <receiver android:name=".IngredientsWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ingredients_widget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>
