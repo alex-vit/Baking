@@ -6,4 +6,5 @@
     <color name="white">#fff</color>
     <color name="silver">#eee</color>
     <color name="black">#000</color>
+    <color name="note_paper">#F8ECC2</color>
 </resources>
