@@ -21,7 +21,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_small"
         android:contentDescription="@string/appwidget_text"
-        android:ellipsize="end"
         android:text="@string/appwidget_text"
         android:textSize="@dimen/fz_normal" />
 
